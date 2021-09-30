@@ -1,0 +1,23 @@
+# -*- mode: ruby -*-
+ # vi: set ft=ruby :
+
+ VAGRANTFILE_API_VERSION = "2"
+
+ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+   config.vm.box = "geerlingguy/centos7"
+   config.vm.hostname = "gitlab.nordic"
+
+   if Vagrant.has_plugin?("vagrant-vbguest")
+     config.vbguest.auto_update = false
+   end
+   config.vm.network "private_network", ip: "192.168.33.222"
+   config.vm.synced_folder ".", "/vagrant", type: "rsync", rsync__exclude: [".git/"]
+
+   config.vm.provider "virtualbox" do |vb|
+     # Display the VirtualBox GUI when booting the machine
+     #vb.gui = true
+     vb.name = "gitlab.nordic"
+     # Customize the amount of memory on the VM:
+     vb.memory = "3096"
+   end
+ end
