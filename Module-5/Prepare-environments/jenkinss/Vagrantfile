@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "geerlingguy/ubuntu1604"
+  config.ssh.insert_key = false
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+
+  config.vm.provider :virtualbox do |v|
+    v.name = "jenkins"
+    v.memory = 2048
+    v.cpus = 2
+    v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    v.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+
+  config.vm.hostname = "jenkins"
+  config.vm.network :private_network, ip: "192.168.56.55"
+
+  # Set the name of the VM. See: http://stackoverflow.com/a/17864388/100134
+  config.vm.define :jenkins do |jenkins|
+  end
+
+  # shell provisioner.
+#   config.vm.provision "ansible" do |ansible|
+#     ansible.compatibility_mode = "2.0"
+#     ansible.playbook = "provisioning/playbook.yml"
+#     ansible.inventory_path = "provisioning/inventory"
+#     ansible.become = true
+#   end
+
+    # Ansible provisioner.
+    config.vm.provision "shell", inline: <<-SHELL
+          sudo apt-get install -y \
+              apt-transport-https \
+              ca-certificates \
+              curl \
+              software-properties-common
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo apt-key fingerprint 0EBFCD88
+          sudo add-apt-repository \
+             "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+             $(lsb_release -cs) \
+             stable"
+          sudo apt-get update
+          sudo apt-get install -y docker-ce
+          sudo docker run hello-world
+          # Linux post-install
+          sudo groupadd docker
+          sudo usermod -aG docker vagrant
+          sudo systemctl enable docker
+          sudo mkdir /home/vagrant/jenkinshome
+          docker pull jenkins/jenkins:lts
+          docker run -d --name jenkins -p 8080:8080 -p 50000:50000 -v jenkinshome:/var/jenkins_home jenkins/jenkins:lts
+
+        SHELL
+  end
+
+# end

@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","rsync__exclude":[".git/"],"guestpath":"/vagrant","hostpath":"/Users/huannv/DO1/Module-5/Prepare-environments/gitlab","disabled":false,"__vagrantfile":true,"exclude":[".git/"],"owner":"vagrant","group":"vagrant"}}}

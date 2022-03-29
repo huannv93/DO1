@@ -1,0 +1,1 @@
+{"dependencies":[["http_connection",[">= 0"]],["rexml",[">= 0"]],["xml-simple",[">= 0"]],["uuidtools",[">= 0"]],["aws",["= 2.10.2"]]],"checksum":"f2de35ada5117358d7212222a1cf3c22e84de2448703467b3e928f04ec2ed4c3","vagrant_version":"2.2.19"}
