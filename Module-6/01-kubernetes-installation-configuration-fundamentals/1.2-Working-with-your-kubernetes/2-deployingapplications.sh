@@ -154,9 +154,11 @@ kubectl expose deployment hello-world \
 #Write the service yaml manifest to file
 kubectl expose deployment hello-world \
      --port=80 --target-port=8080 \
-     --dry-run=client -o yaml > service.yaml 
+     --dry-run=client -o yaml > service.yaml
 
-
+kubectl expose deployment nginx-huannv \
+     --port=80 --target-port=8080 \
+     --dry-run=client -o yaml > service.yaml
 #The contents of the yaml file show the definition of the Service
 more service.yaml 
 
@@ -207,3 +209,7 @@ kubectl get deployment hello-world
 kubectl delete deployment hello-world
 kubectl delete service hello-world
 kubectl get all
+
+co 2 phan chinh la : deployment va service
+
+done
