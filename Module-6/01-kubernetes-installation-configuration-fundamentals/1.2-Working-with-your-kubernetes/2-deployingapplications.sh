@@ -202,6 +202,8 @@ kubectl get deployment hello-world
 
 #You can also scale a deployment using scale
 kubectl scale deployment hello-world --replicas=40
+
+
 kubectl get deployment hello-world
 
 
@@ -210,6 +212,170 @@ kubectl delete deployment hello-world
 kubectl delete service hello-world
 kubectl get all
 
-co 2 phan chinh la : deployment va service
+co 3 phan chinh la : deployment va service va namespace
 
 done
+
+
+aen@c1-cp1:~$ cat deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-huannv
+  name: nginx-huannv
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello-world
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: hello-world
+    spec:
+      containers:
+      - image: huannv93/nginx-pipeline:latest
+        name: hello-app
+        resources: {}
+status: {}
+
+
+
+
+aen@c1-cp1:~$ cat deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-huannv
+  name: nginx-huannv
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-huannv
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx-huannv
+    spec:
+      containers:
+      - image: huannv93/nginx-pipeline:latest
+        name: nginx-huannv
+        resources: {}
+status: {}
+
+
+\\\\deployment2\\\\vidu\\\\\\\\\
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp1
+  labels:
+    app: app1
+spec:
+  containers:
+  - name: n1
+    image: nginx
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+    ports:
+      - containerPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp2
+  labels:
+    app: app1
+spec:
+  containers:
+  - name: n1
+    image: httpd
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "100m"
+    ports:
+      - containerPort: 80
+
+ \\\\deployment2\\\\vidu\\\\\\\\\
+
+
+
+
+
+
+aen@c1-cp1:~$ cat service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx-huannv
+  name: nginx-huannv
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: hello-world
+status:
+  loadBalancer: {}
+aen@c1-cp1:~$
+
+
+aen@c1-cp1:~$ cat service3.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-huannv
+spec:
+  selector:
+     app: nginx-huannv
+  type: NodePort
+  ports:
+    - name: port1
+      port: 80
+      targetPort: 80
+      nodePort: 30080
+
+
+///Service type "
+Nodeport la forward ip cac node ra ngoai de access vao pod
+Cluster : la mac dinh, access vao ip cluster nhung ben ngoai ko truy cap dc. ip tu sinh trong k8s
+..dang tim hieu them type loadBalancer
+
+- loadBalancer: https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/
+
+Có 3 kiểu services:
+ClusterIP:
+IP nội bộ K8s đại diện cho diện cho tập các Pod
+Traffic tới sẽ được cân bằng tải tới tập các Pod thuộc deployment
+Node Port:
+Sử dụng để expose IP nội bộ bên trong Cluster ra bên ngoài
+Mapping 1 cặp IP + Port nội bộ tới cặp 1 cặp IP + Port Bên ngoài để có thể truy cập từ internet vào dịch vụ bên trong Cluster
+Traffic được cân bằng tải tới tập các Pod thuộc deployment
+LoadBalancer
+Gắn cho Deployment 1 IP Public
+Có thể truy cập dịch vụ thông qua IP Public
+Traffic được cân bằng tải tới tập các Pod bên trong Cluster
+
+
+///
+"
+
+- link : https://xuanthulab.net/su-dung-service-va-secret-tls-trong-kubernetes.html
+
